@@ -11,8 +11,8 @@
     "test:integration": "jest --testPathPattern=tests/.*\\.integration\\.js$",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "lint": "eslint src/ tests/ --ext .js",
-    "lint:fix": "eslint src/ tests/ --ext .js --fix",
+    "lint": "eslint --config ./eslint.config.mjs src/* test/*",
+    "lint:fix": "eslint src/ tests/ --c .js --fix",
     "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
     "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\"",
     "build": "./scripts/build.sh",
@@ -64,8 +64,10 @@
     "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.33.0",
     "@types/jest": "^29.5.5",
-    "eslint": "^8.49.0",
+    "eslint": "^8.57.1",
+    "globals": "^16.3.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "jsdoc": "^4.0.2",
