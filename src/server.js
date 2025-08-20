@@ -2,6 +2,7 @@
  * WTF Cosmos JS - Server
  * 服务器主文件
  */
+console.log(555);
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -22,14 +23,14 @@ const transactionsRoutes = require('./api/transactions');
 const miningRoutes = require('./api/mining');
 const validatorsRoutes = require('./api/validators');
 const governanceRoutes = require('./api/governance');
+console.log(444);
 
 /**
  * 创建服务器
  * @returns {Express} Express 应用
  */
-async function createServer() {
+function createServer() {
   const app = express();
-  
   // 安全中间件
   app.use(helmet({
     contentSecurityPolicy: {
@@ -65,11 +66,11 @@ async function createServer() {
   app.use(express.static(path.join(__dirname, '../public')));
   
   // 初始化区块链
-  const blockchain = new Blockchain();
+  // const blockchain = new Blockchain();
   const wallets = new Map(); // 钱包存储
   
   // 将区块链和钱包挂载到 app 上
-  app.locals.blockchain = blockchain;
+  // app.locals.blockchain = blockchain;
   app.locals.wallets = wallets;
   
   // 健康检查端点
@@ -103,7 +104,7 @@ async function createServer() {
       version: '1.0.0',
       description: '一个基于 CosmJS 的增强型区块链实现',
       endpoints: {
-        blockchain: '/api/blockchain',
+        // blockchain: '/api/blockchain',
         wallets: '/api/wallets',
         transactions: '/api/transactions',
         mining: '/api/mining',
@@ -142,5 +143,4 @@ async function createServer() {
   logger.info('服务器初始化完成');
   return app;
 }
-
 module.exports = { createServer };
