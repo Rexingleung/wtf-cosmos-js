@@ -1,70 +1,55 @@
 #!/bin/bash
 
-# WTF Cosmos JS - 设置脚本
+# WTF Cosmos JS - Setup Script
+# 项目设置脚本
 
-set -e
+echo "🚀 设置 WTF Cosmos JS 项目..."
 
-echo "🛠️ Setting up WTF Cosmos JS development environment..."
-
-# 检查 Node.js
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is not installed"
-    echo "📌 Please install Node.js 16 or higher from https://nodejs.org/"
+# 检查 Node.js 版本
+NODE_VERSION=$(node --version 2>/dev/null || echo "未安装")
+if [[ $NODE_VERSION == "未安装" ]]; then
+    echo "❌ 错误: 请先安装 Node.js (>= 16.0.0)"
     exit 1
 fi
 
-# 检查 npm
-if ! command -v npm &> /dev/null; then
-    echo "❌ npm is not installed"
-    exit 1
-fi
+echo "✅ Node.js 版本: $NODE_VERSION"
 
 # 安装依赖
-echo "📦 Installing dependencies..."
+echo "📦 安装依赖包..."
 npm install
 
-# 安装开发依赖
-echo "📦 Installing development dependencies..."
-npm install --save-dev
+if [ $? -ne 0 ]; then
+    echo "❌ 依赖安装失败"
+    exit 1
+fi
 
-# 创建目录
-echo "📁 Creating directories..."
-mkdir -p logs
-mkdir -p data
-mkdir -p tests/fixtures
-
-# 复制环境变量文件
-if [ ! -f ".env" ]; then
-    echo "⚙️ Creating .env file from template..."
+# 复制环境配置文件
+if [ ! -f .env ]; then
+    echo "📄 创建环境配置文件..."
     cp .env.example .env
 fi
 
-# 检查代码风格
-echo "🔍 Running code style check..."
-# npm run lint
+# 创建必要的目录
+echo "📁 创建项目目录..."
+mkdir -p logs
+mkdir -p data
+mkdir -p coverage
 
-# 运行测试
-echo "🧪 Running tests..."
-# npm test
-
-# 生成文档
-echo "📝 Generating documentation..."
-if command -v jsdoc &> /dev/null; then
-    # npm run docs
+# 检查端口是否被占用
+PORT=${PORT:-3000}
+if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null ; then
+    echo "⚠️  警告: 端口 $PORT 已被占用"
+else
+    echo "✅ 端口 $PORT 可用"
 fi
 
+echo "🎉 项目设置完成!"
 echo ""
-echo "✅ Setup completed successfully!"
+echo "💡 下一步:"
+echo "   npm start      - 启动生产服务器"
+echo "   npm run dev    - 启动开发服务器"
+echo "   npm test       - 运行测试"
+echo "   npm run lint   - 代码检查"
 echo ""
-echo "🚀 Next steps:"
-echo "  1. Review and modify .env file if needed"
-echo "  2. Run 'npm start' to start the server"
-echo "  3. Visit http://localhost:3000 to access the dashboard"
-echo "  4. Check out the API at http://localhost:3000/api"
-echo ""
-echo "📚 Documentation:"
-echo "  - README.md for getting started"
-echo "  - docs/API.md for API reference"
-echo "  - docs/ folder for more detailed documentation"
-echo ""
-echo "🎉 Happy coding!"
+echo "🌐 Web 界面: http://localhost:$PORT"
+echo "🔗 API 文档: http://localhost:$PORT/api"
