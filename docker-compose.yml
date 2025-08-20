@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  wtf-cosmos-js:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - LOG_LEVEL=info
+      - BLOCKCHAIN_DIFFICULTY=4
+      - MINING_REWARD=50
+      - MAX_BLOCK_SIZE=1048576
+      - BLOCK_TIME=30000
+    volumes:
+      - blockchain_data:/app/data
+      - blockchain_logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/blockchain/stats', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wtf-cosmos-network
+
+  # 可选：数据库服务（未来版本使用）
+  # mongodb:
+  #   image: mongo:5
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=wtfcosmos
+  #     - MONGO_INITDB_ROOT_PASSWORD=your_password_here
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   restart: unless-stopped
+  #   networks:
+  #     - wtf-cosmos-network
+
+  # 可选：监控服务
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus_data:/prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/etc/prometheus/console_libraries'
+  #     - '--web.console.templates=/etc/prometheus/consoles'
+  #   restart: unless-stopped
+  #   networks:
+  #     - wtf-cosmos-network
+
+volumes:
+  blockchain_data:
+    driver: local
+  blockchain_logs:
+    driver: local
+  # mongodb_data:
+  #   driver: local
+  # prometheus_data:
+  #   driver: local
+
+networks:
+  wtf-cosmos-network:
+    driver: bridge
