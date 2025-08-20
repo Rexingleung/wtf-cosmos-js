@@ -3,545 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WTF Cosmos JS - 区块链浏览器</title>
+    <title>WTF Cosmos JS - 区块链学习平台</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .card {
+        .blockchain-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .status-active { @apply bg-green-500 text-white px-2 py-1 rounded text-xs; }
-        .status-pending { @apply bg-yellow-500 text-white px-2 py-1 rounded text-xs; }
-        .status-confirmed { @apply bg-green-500 text-white px-2 py-1 rounded text-xs; }
-        .status-failed { @apply bg-red-500 text-white px-2 py-1 rounded text-xs; }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body class="gradient-bg min-h-screen text-white">
     <!-- 导航栏 -->
-    <nav class="glass p-6 mb-8">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-cube text-2xl"></i>
-                <h1 class="text-2xl font-bold">WTF Cosmos JS</h1>
-            </div>
-            <div class="flex space-x-6">
-                <button onclick="showSection('dashboard')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-tachometer-alt mr-2"></i>仪表盘
-                </button>
-                <button onclick="showSection('blocks')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-cubes mr-2"></i>区块
-                </button>
-                <button onclick="showSection('transactions')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-exchange-alt mr-2"></i>交易
-                </button>
-                <button onclick="showSection('wallets')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-wallet mr-2"></i>钱包
-                </button>
-                <button onclick="showSection('mining')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-hammer mr-2"></i>挖矿
-                </button>
-                <button onclick="showSection('validators')" class="hover:text-blue-300 transition-colors">
-                    <i class="fas fa-shield-alt mr-2"></i>验证者
-                </button>
+    <nav class="bg-black bg-opacity-20 backdrop-filter backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold">🚀 WTF Cosmos JS</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#dashboard" class="hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">仪表盘</a>
+                    <a href="#explorer" class="hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">区块浏览器</a>
+                    <a href="#wallet" class="hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">钱包</a>
+                    <a href="#mining" class="hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">挖矿</a>
+                    <a href="#governance" class="hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">治理</a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto px-6">
-        <!-- 仪表盘 -->
-        <div id="dashboard" class="section">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="card p-6 text-center">
-                    <i class="fas fa-cubes text-3xl mb-4 text-blue-300"></i>
-                    <h3 class="text-lg font-semibold mb-2">区块高度</h3>
-                    <p id="blockHeight" class="text-2xl font-bold">-</p>
-                </div>
-                <div class="card p-6 text-center">
-                    <i class="fas fa-exchange-alt text-3xl mb-4 text-green-300"></i>
-                    <h3 class="text-lg font-semibold mb-2">交易数</h3>
-                    <p id="totalTransactions" class="text-2xl font-bold">-</p>
-                </div>
-                <div class="card p-6 text-center">
-                    <i class="fas fa-clock text-3xl mb-4 text-yellow-300"></i>
-                    <h3 class="text-lg font-semibold mb-2">待处理交易</h3>
-                    <p id="pendingTx" class="text-2xl font-bold">-</p>
-                </div>
-                <div class="card p-6 text-center">
-                    <i class="fas fa-tachometer-alt text-3xl mb-4 text-purple-300"></i>
-                    <h3 class="text-lg font-semibold mb-2">挖矿难度</h3>
-                    <p id="difficulty" class="text-2xl font-bold">-</p>
-                </div>
-            </div>
-
-            <div class="card p-6">
-                <h2 class="text-xl font-bold mb-4">
-                    <i class="fas fa-cubes mr-2"></i>最新区块
-                </h2>
-                <div id="latestBlocks" class="space-y-4">
-                    <!-- 区块列表将在这里动态加载 -->
-                </div>
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- 欢迎区域 -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4">欢迎来到 WTF Cosmos JS</h2>
+            <p class="text-xl text-gray-200 mb-8">用 JavaScript 构建的教育性区块链实现</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="initializeBlockchain()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                    初始化区块链
+                </button>
+                <button onclick="showAPIDoc()" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition-colors">
+                    查看 API 文档
+                </button>
             </div>
         </div>
 
-        <!-- 区块浏览 -->
-        <div id="blocks" class="section hidden">
-            <div class="card p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">
-                        <i class="fas fa-cubes mr-2"></i>区块浏览
-                    </h2>
-                    <button onclick="loadBlocks()" class="btn-primary px-4 py-2 rounded-lg">
-                        <i class="fas fa-sync mr-2"></i>刷新
+        <!-- 状态卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-2">区块高度</h3>
+                <p class="text-3xl font-bold" id="blockHeight">-</p>
+            </div>
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-2">待处理交易</h3>
+                <p class="text-3xl font-bold" id="pendingTx">-</p>
+            </div>
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-2">总供应量</h3>
+                <p class="text-3xl font-bold" id="totalSupply">-</p>
+            </div>
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-2">挖矿状态</h3>
+                <p class="text-3xl font-bold" id="miningStatus">-</p>
+            </div>
+        </div>
+
+        <!-- 功能区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 快速交易 -->
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">💰 快速转账</h3>
+                <form id="transferForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">发送地址</label>
+                        <input type="text" id="fromAddress" class="w-full p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="wtf1...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">接收地址</label>
+                        <input type="text" id="toAddress" class="w-full p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="wtf1...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">金额</label>
+                        <input type="number" id="amount" class="w-full p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="100">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">私钥</label>
+                        <input type="password" id="privateKey" class="w-full p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="私钥">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-semibold transition-colors">
+                        发送交易
                     </button>
-                </div>
-                <div id="blocksList"></div>
+                </form>
             </div>
-        </div>
 
-        <!-- 交易管理 -->
-        <div id="transactions" class="section hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-paper-plane mr-2"></i>创建交易
-                    </h2>
-                    <form onsubmit="createTransaction(event)" class="space-y-4">
-                        <input type="text" id="fromAddress" placeholder="发送者地址" 
-                               class="w-full p-3 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 placeholder-gray-300">
-                        <input type="text" id="toAddress" placeholder="接收者地址" 
-                               class="w-full p-3 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 placeholder-gray-300">
-                        <input type="number" id="amount" placeholder="转账金额" 
-                               class="w-full p-3 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 placeholder-gray-300">
-                        <input type="password" id="privateKey" placeholder="私钥" 
-                               class="w-full p-3 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 placeholder-gray-300">
-                        <button type="submit" class="w-full btn-primary p-3 rounded-lg font-semibold">
-                            <i class="fas fa-paper-plane mr-2"></i>发送交易
-                        </button>
-                    </form>
-                </div>
-
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-list mr-2"></i>交易列表
-                    </h2>
-                    <div id="transactionsList" class="space-y-3 max-h-96 overflow-y-auto"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 钱包管理 -->
-        <div id="wallets" class="section hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-plus mr-2"></i>创建钱包
-                    </h2>
-                    <button onclick="createWallet()" class="w-full btn-primary p-3 rounded-lg font-semibold">
-                        <i class="fas fa-wallet mr-2"></i>创建新钱包
+            <!-- 钱包管理 -->
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">👛 钱包管理</h3>
+                <div class="space-y-4">
+                    <button onclick="createWallet()" class="w-full bg-green-600 hover:bg-green-700 py-2 rounded font-semibold transition-colors">
+                        创建新钱包
                     </button>
-                    <div id="newWalletInfo" class="mt-4 hidden"></div>
-                </div>
-
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-list mr-2"></i>钱包列表
-                    </h2>
-                    <div id="walletsList"></div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">查询余额</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="balanceAddress" class="flex-1 p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="输入地址">
+                            <button onclick="checkBalance()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-semibold transition-colors">
+                                查询
+                            </button>
+                        </div>
+                        <p class="mt-2 text-sm" id="balanceResult"></p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 挖矿管理 -->
-        <div id="mining" class="section hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-hammer mr-2"></i>挖矿控制
-                    </h2>
-                    <div class="space-y-4">
-                        <input type="text" id="minerAddress" placeholder="矿工奖励地址" 
-                               class="w-full p-3 bg-white bg-opacity-10 rounded-lg border border-white border-opacity-20 placeholder-gray-300">
-                        <button onclick="startMining()" id="startMiningBtn" class="w-full btn-primary p-3 rounded-lg font-semibold">
-                            <i class="fas fa-play mr-2"></i>开始挖矿
+        <!-- 挖矿控制 -->
+        <div class="mt-8">
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">⛏️ 挖矿控制</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">矿工地址</label>
+                        <input type="text" id="minerAddress" class="w-full p-2 bg-white bg-opacity-20 rounded border border-gray-300 text-white placeholder-gray-300" placeholder="wtf1miner...">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="startMining()" class="w-full bg-yellow-600 hover:bg-yellow-700 py-2 rounded font-semibold transition-colors">
+                            开始挖矿
                         </button>
-                        <button onclick="stopMining()" id="stopMiningBtn" class="w-full bg-red-500 hover:bg-red-600 p-3 rounded-lg font-semibold hidden">
-                            <i class="fas fa-stop mr-2"></i>停止挖矿
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="stopMining()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold transition-colors">
+                            停止挖矿
                         </button>
                     </div>
                 </div>
-
-                <div class="card p-6">
-                    <h2 class="text-xl font-bold mb-4">
-                        <i class="fas fa-chart-line mr-2"></i>挖矿状态
-                    </h2>
-                    <div id="miningStatus" class="space-y-3"></div>
-                </div>
+                <div class="mt-4" id="miningInfo"></div>
             </div>
         </div>
 
-        <!-- 验证者管理 -->
-        <div id="validators" class="section hidden">
-            <div class="card p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold">
-                        <i class="fas fa-shield-alt mr-2"></i>验证者列表
-                    </h2>
-                    <button onclick="loadValidators()" class="btn-primary px-4 py-2 rounded-lg">
-                        <i class="fas fa-sync mr-2"></i>刷新
-                    </button>
+        <!-- 最新区块 -->
+        <div class="mt-8">
+            <div class="blockchain-card rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4">📦 最新区块</h3>
+                <div id="latestBlocks" class="space-y-2">
+                    <!-- 区块信息将在这里显示 -->
                 </div>
-                <div id="validatorsList"></div>
+                <button onclick="loadLatestBlocks()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded font-semibold transition-colors">
+                    刷新区块
+                </button>
             </div>
         </div>
+    </main>
+
+    <!-- 消息提示 -->
+    <div id="notification" class="fixed top-4 right-4 p-4 rounded-lg shadow-lg hidden">
+        <p id="notificationText"></p>
     </div>
 
     <script>
-        let currentSection = 'dashboard';
-        let refreshInterval;
+        // 全局状态
+        let blockchainStats = {};
+        let updateInterval = null;
 
-        async function apiCall(endpoint, method = 'GET', data = null) {
-            const options = {
-                method,
-                headers: { 'Content-Type': 'application/json' }
-            };
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadLatestBlocks();
+            setupTransferForm();
             
-            if (data) options.body = JSON.stringify(data);
-            
+            // 每5秒更新一次状态
+            updateInterval = setInterval(loadStats, 5000);
+        });
+
+        // 加载区块链统计信息
+        async function loadStats() {
             try {
-                const response = await fetch(`/api${endpoint}`, options);
-                const result = await response.json();
+                const response = await fetch('/api');
+                const data = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(result.error || '请求失败');
-                }
+                blockchainStats = data.blockchain || {};
                 
-                return result;
+                document.getElementById('blockHeight').textContent = blockchainStats.height || 0;
+                document.getElementById('pendingTx').textContent = blockchainStats.pendingTransactions || 0;
+                document.getElementById('totalSupply').textContent = (blockchainStats.totalSupply || 0).toLocaleString();
+                
+                // 获取挖矿状态
+                const miningResponse = await fetch('/api/mining/status');
+                const miningData = await miningResponse.json();
+                document.getElementById('miningStatus').textContent = miningData.isMining ? '挖矿中' : '空闲';
             } catch (error) {
-                console.error('API 调用失败:', error);
-                showNotification(error.message, 'error');
-                throw error;
+                console.error('加载统计信息失败:', error);
             }
         }
 
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 ${
-                type === 'error' ? 'bg-red-500' : 
-                type === 'success' ? 'bg-green-500' : 'bg-blue-500'
-            }`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 3000);
+        // 初始化区块链
+        async function initializeBlockchain() {
+            showNotification('区块链已初始化', 'success');
+            loadStats();
         }
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            document.getElementById(sectionId).classList.remove('hidden');
-            currentSection = sectionId;
-            
-            switch(sectionId) {
-                case 'dashboard': loadDashboard(); break;
-                case 'blocks': loadBlocks(); break;
-                case 'transactions': loadTransactions(); break;
-                case 'wallets': loadWallets(); break;
-                case 'mining': loadMiningStatus(); break;
-                case 'validators': loadValidators(); break;
-            }
+        // 显示API文档
+        function showAPIDoc() {
+            window.open('/api', '_blank');
         }
 
-        async function loadDashboard() {
-            try {
-                const [stats, pendingTx] = await Promise.all([
-                    apiCall('/blockchain/stats'),
-                    apiCall('/blockchain/pending-transactions')
-                ]);
-                
-                document.getElementById('blockHeight').textContent = stats.latestBlockHeight || 0;
-                document.getElementById('totalTransactions').textContent = stats.totalTransactions || 0;
-                document.getElementById('pendingTx').textContent = pendingTx.count || 0;
-                document.getElementById('difficulty').textContent = stats.difficulty || 0;
-                
-                const blocks = await apiCall('/blockchain/blocks?limit=5');
-                displayLatestBlocks(blocks.blocks || []);
-            } catch (error) {
-                console.error('加载仪表盘数据失败:', error);
-            }
-        }
-
-        function displayLatestBlocks(blocks) {
-            const container = document.getElementById('latestBlocks');
-            container.innerHTML = blocks.map(block => `
-                <div class="glass p-4 rounded-lg">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-semibold">高度: ${block.height}</span>
-                            <span class="ml-4 text-sm text-gray-300">${new Date(block.timestamp).toLocaleString()}</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm">交易: ${block.transactionCount}</div>
-                            <div class="text-xs text-gray-400">${block.hash.substring(0, 16)}...</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function loadBlocks() {
-            try {
-                const result = await apiCall('/blockchain/blocks');
-                const container = document.getElementById('blocksList');
-                
-                container.innerHTML = result.blocks.map(block => `
-                    <div class="glass p-4 rounded-lg mb-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <div class="font-semibold">高度: ${block.height}</div>
-                                <div class="text-sm text-gray-300">${new Date(block.timestamp).toLocaleString()}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm">交易数: ${block.transactionCount}</div>
-                                <div class="text-sm">难度: ${block.difficulty}</div>
-                            </div>
-                            <div>
-                                <div class="text-xs text-gray-400">哈希: ${block.hash}</div>
-                                <div class="text-xs text-gray-400">验证者: ${block.validator || 'N/A'}</div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('加载区块列表失败:', error);
-            }
-        }
-
-        async function createTransaction(event) {
-            event.preventDefault();
-            
-            const fromAddress = document.getElementById('fromAddress').value;
-            const toAddress = document.getElementById('toAddress').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-            const privateKey = document.getElementById('privateKey').value;
-            
-            if (!fromAddress || !toAddress || !amount || !privateKey) {
-                showNotification('请填写所有必要信息', 'error');
-                return;
-            }
-            
-            try {
-                const result = await apiCall('/transactions', 'POST', {
-                    fromAddress, toAddress, amount, privateKey
-                });
-                
-                showNotification('交易创建成功', 'success');
-                
-                document.getElementById('fromAddress').value = '';
-                document.getElementById('toAddress').value = '';
-                document.getElementById('amount').value = '';
-                document.getElementById('privateKey').value = '';
-                
-                loadTransactions();
-            } catch (error) {
-                console.error('创建交易失败:', error);
-            }
-        }
-
-        async function loadTransactions() {
-            try {
-                const result = await apiCall('/transactions?limit=10');
-                const container = document.getElementById('transactionsList');
-                
-                container.innerHTML = result.transactions.map(tx => `
-                    <div class="glass p-3 rounded-lg">
-                        <div class="flex justify-between items-center">
-                            <div class="text-sm">
-                                <div class="font-semibold">${tx.type}</div>
-                                <div class="text-gray-300">${tx.amount} WTF</div>
-                            </div>
-                            <div class="text-right text-xs">
-                                <div class="status-${tx.status}">${tx.status}</div>
-                                <div class="text-gray-400 mt-1">${new Date(tx.timestamp).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('加载交易列表失败:', error);
-            }
-        }
-
+        // 创建钱包
         async function createWallet() {
             try {
-                const result = await apiCall('/wallets', 'POST');
+                const response = await fetch('/api/wallets', { method: 'POST' });
+                const wallet = await response.json();
                 
-                const infoContainer = document.getElementById('newWalletInfo');
-                infoContainer.innerHTML = `
-                    <div class="space-y-2">
-                        <h3 class="font-semibold text-green-300">钱包创建成功！</h3>
-                        <div class="text-sm">
-                            <div><strong>地址:</strong> ${result.address}</div>
-                            <div><strong>私钥:</strong> ${result.privateKey}</div>
-                            <div class="text-red-300 mt-2">⚠️ 请妥善保管您的私钥！</div>
-                        </div>
-                    </div>
+                const walletInfo = `
+                    地址: ${wallet.address}
+                    私钥: ${wallet.privateKey}
+                    公钥: ${wallet.publicKey}
                 `;
-                infoContainer.classList.remove('hidden');
                 
-                showNotification('钱包创建成功', 'success');
-                loadWallets();
+                alert('新钱包创建成功!\n\n' + walletInfo + '\n\n请安全保存私钥！');
             } catch (error) {
-                console.error('创建钱包失败:', error);
+                showNotification('创建钱包失败: ' + error.message, 'error');
             }
         }
 
-        async function loadWallets() {
-            try {
-                const result = await apiCall('/wallets');
-                const container = document.getElementById('walletsList');
-                
-                container.innerHTML = result.wallets.map(wallet => `
-                    <div class="glass p-4 rounded-lg mb-3">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <div class="font-semibold">${wallet.address.substring(0, 20)}...</div>
-                                <div class="text-sm text-gray-300">余额: ${wallet.balance} WTF</div>
-                            </div>
-                            <div class="text-right text-xs text-gray-400">
-                                ${new Date(wallet.createdAt).toLocaleString()}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('加载钱包列表失败:', error);
-            }
-        }
-
-        async function startMining() {
-            const minerAddress = document.getElementById('minerAddress').value;
-            
-            if (!minerAddress) {
-                showNotification('请输入矿工奖励地址', 'error');
+        // 查询余额
+        async function checkBalance() {
+            const address = document.getElementById('balanceAddress').value;
+            if (!address) {
+                showNotification('请输入地址', 'error');
                 return;
             }
-            
+
             try {
-                await apiCall('/mining', 'POST', { minerAddress });
+                const response = await fetch(`/api/wallets/${address}/balance`);
+                const data = await response.json();
                 
-                document.getElementById('startMiningBtn').classList.add('hidden');
-                document.getElementById('stopMiningBtn').classList.remove('hidden');
-                
-                showNotification('挖矿已开始', 'success');
-                refreshInterval = setInterval(loadMiningStatus, 2000);
+                document.getElementById('balanceResult').textContent = `余额: ${data.balance} WTF`;
             } catch (error) {
-                console.error('开始挖矿失败:', error);
+                document.getElementById('balanceResult').textContent = '查询失败';
+                showNotification('查询余额失败: ' + error.message, 'error');
             }
         }
 
+        // 设置转账表单
+        function setupTransferForm() {
+            document.getElementById('transferForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fromAddress = document.getElementById('fromAddress').value;
+                const toAddress = document.getElementById('toAddress').value;
+                const amount = parseFloat(document.getElementById('amount').value);
+                const privateKey = document.getElementById('privateKey').value;
+                
+                if (!fromAddress || !toAddress || !amount || !privateKey) {
+                    showNotification('请填写所有字段', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/transactions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fromAddress,
+                            toAddress,
+                            amount,
+                            privateKey
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        showNotification('交易创建成功!', 'success');
+                        document.getElementById('transferForm').reset();
+                        loadStats();
+                    } else {
+                        showNotification('交易失败: ' + result.message, 'error');
+                    }
+                } catch (error) {
+                    showNotification('交易失败: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // 开始挖矿
+        async function startMining() {
+            const minerAddress = document.getElementById('minerAddress').value;
+            if (!minerAddress) {
+                showNotification('请输入矿工地址', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/mining/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ minerAddress })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification('开始挖矿', 'success');
+                    document.getElementById('miningInfo').innerHTML = `
+                        <p>矿工: ${minerAddress}</p>
+                        <p>状态: 挖矿中...</p>
+                    `;
+                } else {
+                    showNotification('挖矿失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showNotification('挖矿失败: ' + error.message, 'error');
+            }
+        }
+
+        // 停止挖矿
         async function stopMining() {
             try {
-                await apiCall('/mining/stop', 'POST');
+                const response = await fetch('/api/mining/stop', { method: 'POST' });
+                const result = await response.json();
                 
-                document.getElementById('startMiningBtn').classList.remove('hidden');
-                document.getElementById('stopMiningBtn').classList.add('hidden');
-                
-                showNotification('挖矿已停止', 'success');
-                
-                if (refreshInterval) {
-                    clearInterval(refreshInterval);
-                    refreshInterval = null;
+                if (response.ok) {
+                    showNotification('停止挖矿', 'success');
+                    document.getElementById('miningInfo').innerHTML = '<p>状态: 空闲</p>';
+                } else {
+                    showNotification('停止挖矿失败: ' + result.message, 'error');
                 }
             } catch (error) {
-                console.error('停止挖矿失败:', error);
+                showNotification('停止挖矿失败: ' + error.message, 'error');
             }
         }
 
-        async function loadMiningStatus() {
+        // 加载最新区块
+        async function loadLatestBlocks() {
             try {
-                const status = await apiCall('/mining/status');
-                const container = document.getElementById('miningStatus');
+                const response = await fetch('/api/blockchain/blocks?limit=5');
+                const data = await response.json();
                 
-                container.innerHTML = `
-                    <div class="space-y-2">
-                        <div><strong>状态:</strong> ${status.isMining ? '挖矿中' : '空闲'}</div>
-                        <div><strong>当前矿工:</strong> ${status.currentMiner || 'N/A'}</div>
-                        <div><strong>难度:</strong> ${status.difficulty}</div>
-                        <div><strong>待处理交易:</strong> ${status.pendingTransactions}</div>
-                        <div><strong>区块高度:</strong> ${status.blockHeight}</div>
-                        <div><strong>算力:</strong> ${Math.round(status.networkHashRate)} H/s</div>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('加载挖矿状态失败:', error);
-            }
-        }
-
-        async function loadValidators() {
-            try {
-                const result = await apiCall('/validators');
-                const container = document.getElementById('validatorsList');
+                const blocksContainer = document.getElementById('latestBlocks');
+                blocksContainer.innerHTML = '';
                 
-                container.innerHTML = result.validators.map(validator => `
-                    <div class="glass p-4 rounded-lg mb-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <div class="font-semibold">${validator.address.substring(0, 20)}...</div>
-                                <div class="text-sm text-gray-300">质押: ${validator.stake} WTF</div>
-                            </div>
-                            <div>
-                                <div class="text-sm">状态: <span class="status-${validator.status}">${validator.status}</span></div>
-                                <div class="text-sm">佣金: ${(validator.commission * 100).toFixed(1)}%</div>
-                            </div>
-                            <div>
-                                <div class="text-sm">投票权重: ${validator.votingPower}</div>
-                                <div class="text-sm">正常运行时间: ${validator.uptime}</div>
-                            </div>
+                data.blocks.forEach(block => {
+                    const blockElement = document.createElement('div');
+                    blockElement.className = 'p-3 bg-white bg-opacity-10 rounded border border-gray-300';
+                    blockElement.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold">区块 #${block.index}</span>
+                            <span class="text-sm text-gray-300">${new Date(block.timestamp).toLocaleString()}</span>
                         </div>
-                    </div>
-                `).join('');
+                        <div class="text-sm text-gray-300 mt-1">
+                            哈希: ${block.hash.substring(0, 16)}...
+                            | 交易数: ${block.transactions.length}
+                        </div>
+                    `;
+                    blocksContainer.appendChild(blockElement);
+                });
             } catch (error) {
-                console.error('加载验证者列表失败:', error);
+                console.error('加载区块失败:', error);
             }
         }
 
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
             
-            // 定期刷新仪表盘数据
-            setInterval(() => {
-                if (currentSection === 'dashboard') {
-                    loadDashboard();
-                }
-            }, 5000);
-        });
+            notificationText.textContent = message;
+            
+            // 设置颜色
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg';
+            if (type === 'success') {
+                notification.classList.add('bg-green-600');
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-600');
+            } else {
+                notification.classList.add('bg-blue-600');
+            }
+            
+            notification.classList.remove('hidden');
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
     </script>
 </body>
 </html>
