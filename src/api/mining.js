@@ -92,7 +92,7 @@ router.post('/start', async (req, res) => {
           transactions: newBlock.transactions.length
         });
       } catch (error) {
-        logger.error('挖矿失败', { error: error.message, miner: minerAddress });
+        logger.error('挖矿失败1', { error: error.message, miner: minerAddress });
       }
     });
 

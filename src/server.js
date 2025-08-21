@@ -28,16 +28,16 @@ const governanceRoutes = require('./api/governance');
 function createServer() {
   const app = express();
   // 安全中间件
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com'],
-        scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
-        imgSrc: ["'self'", 'data:', 'https:'],
-      },
-    },
-  }));
+  // app.use(helmet({
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       defaultSrc: ["'self'"],
+  //       styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com'],
+  //       scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+  //       imgSrc: ["'self'", 'data:', 'https:'],
+  //     },
+  //   },
+  // }));
   // CORS 配置
   app.use(cors({
     origin: config.NODE_ENV === 'production' ? false : true,
@@ -177,21 +177,21 @@ function startServer() {
   });
   
   // 优雅关闭
-  process.on('SIGTERM', () => {
-    logger.info('收到 SIGTERM 信号，开始优雅关闭...');
-    server.close(() => {
-      logger.info('服务器已关闭');
-      process.exit(0);
-    });
-  });
+  // process.on('SIGTERM', () => {
+  //   logger.info('收到 SIGTERM 信号，开始优雅关闭...');
+  //   server.close(() => {
+  //     logger.info('服务器已关闭');
+  //     process.exit(0);
+  //   });
+  // });
   
-  process.on('SIGINT', () => {
-    logger.info('收到 SIGINT 信号，开始优雅关闭...');
-    server.close(() => {
-      logger.info('服务器已关闭');
-      process.exit(0);
-    });
-  });
+  // process.on('SIGINT', () => {
+  //   logger.info('收到 SIGINT 信号，开始优雅关闭...');
+  //   server.close(() => {
+  //     logger.info('服务器已关闭');
+  //     process.exit(0);
+  //   });
+  // });
   
   return server;
 }

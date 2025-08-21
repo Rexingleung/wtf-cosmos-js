@@ -70,15 +70,18 @@ router.post('/', async (req, res) => {
       });
     }
 
-    if (amount <= 0) {
+    if (amount < 0) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: '交易金额必须大于0'
+        message: '交易金额必须大于等于0'
       });
     }
 
     // 检查余额
+    // blockchain.balance
     const senderBalance = blockchain.getBalance(fromAddress);
+    console.log(senderBalance, 'senderBalance');
+    
     if (senderBalance < amount + fee) {
       return res.status(400).json({
         error: 'Insufficient Funds',

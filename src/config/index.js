@@ -32,6 +32,7 @@ const config = {
     SEEDS: process.env.SEEDS ? process.env.SEEDS.split(',') : [],
     PERSISTENT_PEERS: process.env.PERSISTENT_PEERS ? process.env.PERSISTENT_PEERS.split(',') : [],
     MAX_PEERS: parseInt(process.env.MAX_PEERS, 10) || 50,
+    PREFIX: "wtf"
   },
 
   // 共识配置

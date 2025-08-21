@@ -29,6 +29,8 @@ class Blockchain {
     this.maxBlockSize = config.maxBlockSize || 1048576; // 1MB
     
     // 账户余额映射
+    console.log(88888);
+    
     this.balances = new Map();
     
     // 验证者管理
@@ -69,8 +71,8 @@ class Blockchain {
     });
     
     genesisBlock.hash = genesisBlock.calculateHash();
-    this.chain.push(genesisBlock);
     
+    this.chain.push(genesisBlock);
     // 初始化创世账户（用于测试）
     const genesisAddress = 'wtf1genesis000000000000000000000000';
     this.balances.set(genesisAddress, 1000000); // 100万初始代币
@@ -185,6 +187,7 @@ class Blockchain {
     
     try {
       const startTime = Date.now();
+      console.log(1);
       
       // 创建挖矿奖励交易
       const rewardTransaction = new Transaction(
@@ -194,9 +197,11 @@ class Blockchain {
         0,
         'mining_reward'
       );
+      console.log(2);
       
       // 选择要打包的交易（按手续费排序）
       const selectedTransactions = this.selectTransactionsForBlock();
+      console.log(3);
       selectedTransactions.push(rewardTransaction);
       
       // 创建新区块
@@ -207,26 +212,31 @@ class Blockchain {
         previousHash: this.getLatestBlock().hash,
         validator: minerAddress
       });
+      console.log(4);
       
       // 使用 PoW 挖矿
       await this.proofOfWork.mineBlock(newBlock, this.difficulty);
-      
+      console.log(5);
       // 验证区块
       if (!this.validateBlock(newBlock)) {
         throw new Error('挖出的区块无效');
       }
-      
+      console.log(6);
       // 添加到链中
       this.chain.push(newBlock);
+      console.log(7);
       
       // 更新余额
       this.updateBalances(selectedTransactions);
+      console.log(8);
       
       // 清除已打包的交易
       this.removePendingTransactions(selectedTransactions);
+      console.log(9);
       
       // 更新统计信息
       this.updateStats(newBlock, Date.now() - startTime);
+      console.log(10);
       
       logger.info('成功挖出新区块', {
         index: newBlock.index,
@@ -376,6 +386,27 @@ class Blockchain {
    */
   getBalance(address) {
     return this.balances.get(address) || 0;
+  }
+  /**
+   * 获取账户余额
+   * @param {string} address - 账户地址
+   * @returns {number} 余额
+   */
+  getBalanceOfAddress(address) {
+    return this.balances.get(address) || 0;
+  }
+
+  /**
+   * 设置账户余额
+   * @param {string} address - 账户地址
+   * @returns {number} 余额
+   */
+  setBalance(address) {
+    if (address) {
+      this.balances.set(address, Math.floor(Math.random() * 100));
+      const b = this.getBalance(address)
+      return b
+    }
   }
 
   /**

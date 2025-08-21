@@ -16,10 +16,12 @@ router.post('/', (req, res) => {
   try {
     const wallet = new Wallet();
     const wallets = req.app.locals.wallets;
-    
+    const blockchain = req.app.locals.blockchain;
     // 存储钱包
-    wallets.set(wallet.address, wallet);
     
+    wallets.set(wallet.address, wallet);
+    blockchain.setBalance(wallet.address);
+    const senderBalance = blockchain.getBalance(wallet.address);
     res.json({
       address: wallet.address,
       publicKey: wallet.publicKey,
