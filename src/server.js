@@ -13,7 +13,6 @@ const { logger } = require('./utils/logger');
 const config = require('./config');
 const { Blockchain } = require('./blockchain');
 const { GovernanceManager } = require('./governance');
-
 // API 路由
 const blockchainRoutes = require('./api/blockchain');
 const walletsRoutes = require('./api/wallets');
@@ -28,7 +27,6 @@ const governanceRoutes = require('./api/governance');
  */
 function createServer() {
   const app = express();
-  
   // 安全中间件
   app.use(helmet({
     contentSecurityPolicy: {
@@ -40,17 +38,14 @@ function createServer() {
       },
     },
   }));
-  
   // CORS 配置
   app.use(cors({
     origin: config.NODE_ENV === 'production' ? false : true,
     credentials: true,
   }));
-  
   // 请求解析
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-  
   // 日志中间件
   if (config.NODE_ENV !== 'test') {
     app.use(morgan('combined', {
@@ -59,18 +54,16 @@ function createServer() {
       }
     }));
   }
-  
   // 静态文件服务
   app.use(express.static(path.join(__dirname, '../public')));
-  
   // 初始化区块链
+  
   const blockchain = new Blockchain({
     miningReward: config.BLOCKCHAIN.MINING_REWARD,
     difficulty: config.BLOCKCHAIN.DIFFICULTY,
     blockTime: config.BLOCKCHAIN.BLOCK_TIME,
     maxBlockSize: config.BLOCKCHAIN.MAX_BLOCK_SIZE
   });
-  
   // 初始化治理模块
   const governanceManager = new GovernanceManager(blockchain);
   blockchain.governanceManager = governanceManager;
@@ -175,8 +168,8 @@ function createServer() {
  */
 function startServer() {
   const app = createServer();
-  const port = config.PORT || 3000;
   
+  const port = config.PORT || 3000;
   const server = app.listen(port, () => {
     logger.info(`🚀 服务器启动成功，监听端口 ${port}`);
     logger.info(`📱 Web 界面: http://localhost:${port}`);
@@ -203,9 +196,5 @@ function startServer() {
   return server;
 }
 
-// 如果直接运行此文件，则启动服务器
-if (require.main === module) {
-  startServer();
-}
-
+startServer();
 module.exports = { createServer, startServer };

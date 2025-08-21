@@ -8,8 +8,8 @@ const { logger } = require('../utils/logger');
 const { helpers } = require('../utils/helpers');
 const Block = require('./Block');
 const Transaction = require('./Transaction');
-const { ProofOfWork } = require('../consensus/ProofOfWork');
-const { ValidatorManager } = require('../consensus/Validator');
+const ProofOfWork = require('../consensus/ProofOfWork');
+const ValidatorManager = require('../consensus/Validator');
 
 /**
  * 区块链类
