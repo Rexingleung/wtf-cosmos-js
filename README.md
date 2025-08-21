@@ -5,7 +5,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
 
-> 🚀 用 JavaScript 构建的教育性区块链实现，灵感来自 Cosmos SDK
 
 ## 📋 项目状态
 
